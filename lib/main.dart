@@ -40,8 +40,9 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: const Text("shiba"),
         ),
-        body: Center(
-            child: Column(
+        body: SingleChildScrollView(
+            child: Center(
+                child: Column(
           children: <Widget>[
             FutureBuilder<ShibaPic>(
                 future: futurePic,
@@ -59,15 +60,21 @@ class _HomePageState extends State<HomePage> {
                             'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg'));
                   } else {
                     // 処理中の表示
-                    return const CircularProgressIndicator();
+                    return const SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: CircularProgressIndicator());
                   }
                 }),
             ElevatedButton(
               child: const Text('柴犬'),
-              onPressed: () {},
+              onPressed: () async {
+                futurePic = fetchShibaPic();
+                setState(() {});
+              },
             ),
           ],
-        )));
+        ))));
   }
 }
 
