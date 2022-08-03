@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:infinity_page_view/infinity_page_view.dart';
 
 void main() {
   runApp(const MaterialApp(home: HomePage()));
@@ -27,11 +28,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<ShibaPic> futurePic;
+  late int itemCount;
+  late InfinityPageController infinityPageController;
 
   @override
   void initState() {
     super.initState();
+    itemCount = 3;
     futurePic = fetchShibaPic();
+    infinityPageController = InfinityPageController(initialPage: 0);
   }
 
   @override
@@ -54,10 +59,25 @@ class _HomePageState extends State<HomePage> {
                     if (!snapshot.hasData) {
                       return Text("データが見つかりません");
                     }
-                    // データ表示
-                    return Image(
-                        image: NetworkImage(
-                            'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg'));
+                    return SizedBox(
+                      height: 400,
+                      child: InfinityPageView(
+                        itemBuilder: (BuildContext context, int index) {
+                          return Image.network(
+                            'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg',
+                          );
+                        },
+                        itemCount: itemCount,
+                        onPageChanged: (int index) {
+                          futurePic = fetchShibaPic();
+                          setState(() {});
+                        },
+                        controller: infinityPageController,
+                      ),
+                    );
+
+                    //   ],
+                    // );
                   } else {
                     // 処理中の表示
                     return const SizedBox(
