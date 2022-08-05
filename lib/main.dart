@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:loop_page_view/loop_page_view.dart';
 
 void main() {
   runApp(const MaterialApp(home: HomePage()));
@@ -27,6 +28,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<ShibaPic> futurePic;
+  int itemCount = 1;
+  final LoopPageController controller = LoopPageController();
 
   @override
   void initState() {
@@ -37,44 +40,44 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.black12,
         appBar: AppBar(
           title: const Text("shiba"),
         ),
-        body: SingleChildScrollView(
-            child: Center(
-                child: Column(
-          children: <Widget>[
-            FutureBuilder<ShibaPic>(
-                future: futurePic,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    }
-                    if (!snapshot.hasData) {
-                      return Text("データが見つかりません");
-                    }
-                    // データ表示
-                    return Image(
-                        image: NetworkImage(
-                            'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg'));
-                  } else {
-                    // 処理中の表示
-                    return const SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator());
+        body: Center(
+          child: FutureBuilder<ShibaPic>(
+              future: futurePic,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
                   }
-                }),
-            ElevatedButton(
-              child: const Text('柴犬'),
-              onPressed: () async {
-                futurePic = fetchShibaPic();
-                setState(() {});
-              },
-            ),
-          ],
-        ))));
+                  if (!snapshot.hasData) {
+                    return Text("データが見つかりません");
+                  }
+                  // データ表示
+                  return LoopPageView.builder(
+                    controller: controller,
+                    itemCount: itemCount,
+                    itemBuilder: (_, index) {
+                      return Image(
+                          image: NetworkImage(
+                              'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg'));
+                    },
+                    onPageChanged: (value) {
+                      futurePic = fetchShibaPic();
+                      setState(() {});
+                    },
+                  );
+                } else {
+                  // 処理中の表示
+                  return const SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator());
+                }
+              }),
+        ));
   }
 }
 
