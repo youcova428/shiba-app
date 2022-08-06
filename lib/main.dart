@@ -27,14 +27,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<ShibaPic> futurePic;
-  int itemCount = 1;
-  final LoopPageController controller = LoopPageController();
+  late Future<ShibaPic> _futurePic;
+  final int _itemCount = 1;
+  final LoopPageController _controller = LoopPageController();
+  bool _isIconShown = false;
 
   @override
   void initState() {
     super.initState();
-    futurePic = fetchShibaPic();
+    _futurePic = fetchShibaPic();
   }
 
   @override
@@ -46,7 +47,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Center(
           child: FutureBuilder<ShibaPic>(
-              future: futurePic,
+              future: _futurePic,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasError) {
@@ -56,19 +57,41 @@ class _HomePageState extends State<HomePage> {
                     return Text("データが見つかりません");
                   }
                   // データ表示
-                  return LoopPageView.builder(
-                    controller: controller,
-                    itemCount: itemCount,
-                    itemBuilder: (_, index) {
-                      return Image(
-                          image: NetworkImage(
-                              'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg'));
-                    },
-                    onPageChanged: (value) {
-                      futurePic = fetchShibaPic();
-                      setState(() {});
-                    },
-                  );
+                  return GestureDetector(
+                      onDoubleTap: () {
+                        setState(() {
+                          _isIconShown = !_isIconShown;
+                        });
+                      },
+                      child: Stack(
+                        children: [
+                          LoopPageView.builder(
+                            controller: _controller,
+                            itemCount: _itemCount,
+                            itemBuilder: (_, index) {
+                              return Image(
+                                  image: NetworkImage(
+                                      'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg'));
+                            },
+                            onPageChanged: (value) {
+                              _futurePic = fetchShibaPic();
+                              setState(() {
+                                if (_isIconShown) _isIconShown = false;
+                              });
+                            },
+                          ),
+                          Center(
+                            child: Visibility(
+                              visible: _isIconShown,
+                              child: const Icon(
+                                Icons.favorite,
+                                color: Colors.white,
+                                size: 120,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ));
                 } else {
                   // 処理中の表示
                   return const SizedBox(
