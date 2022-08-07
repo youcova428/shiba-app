@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loop_page_view/loop_page_view.dart';
+import 'package:spring/spring.dart';
 
 void main() {
   runApp(const MaterialApp(home: HomePage()));
@@ -63,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                           _isIconShown = !_isIconShown;
                         });
                         // 1秒後削除
-                        Future.delayed(const Duration(seconds: 1), () {
+                        Future.delayed(const Duration(milliseconds: 1200), () {
                           setState(() {
                             if (_isIconShown) {
                               _isIconShown = false;
@@ -89,18 +90,25 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                           Center(
-                            child: Visibility(
-                              visible: _isIconShown,
-                              child: const Icon(
-                                Icons.favorite,
-                                color: Colors.white,
-                                size: 120,
-                                shadows: [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    blurRadius: 20,
-                                  )
-                                ],
+                            child: Spring.bubbleButton(
+                              bubbleStart: .5,
+                              bubbleEnd: 1.0,
+                              onTap: () {},
+                              delay: const Duration(milliseconds: 0),
+                              animDuration: const Duration(milliseconds: 1000),
+                              child: Visibility(
+                                visible: _isIconShown,
+                                child: const Icon(
+                                  Icons.favorite,
+                                  color: Colors.white,
+                                  size: 120,
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 20,
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
