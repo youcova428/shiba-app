@@ -42,9 +42,33 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(color: Colors.brown),
+                child: Text(
+                  '画面遷移',
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ListTile(
+                title: const Text('お気に入り'),
+                onTap: () {
+                  //　TODO お気に入り画像一覧画面　遷移　処理追加
+                },
+              ),
+            ],
+          ),
+        ),
         backgroundColor: Colors.black12,
         appBar: AppBar(
           title: const Text("shiba"),
+          backgroundColor: Colors.brown,
+          centerTitle: true,
         ),
         body: Center(
           child: FutureBuilder<ShibaPic>(
