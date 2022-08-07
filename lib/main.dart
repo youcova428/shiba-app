@@ -62,6 +62,14 @@ class _HomePageState extends State<HomePage> {
                         setState(() {
                           _isIconShown = !_isIconShown;
                         });
+                        // 1秒後削除
+                        Future.delayed(const Duration(seconds: 1), () {
+                          setState(() {
+                            if (_isIconShown) {
+                              _isIconShown = false;
+                            }
+                          });
+                        });
                       },
                       child: Stack(
                         children: [
@@ -87,6 +95,12 @@ class _HomePageState extends State<HomePage> {
                                 Icons.favorite,
                                 color: Colors.white,
                                 size: 120,
+                                shadows: [
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 20,
+                                  )
+                                ],
                               ),
                             ),
                           ),
