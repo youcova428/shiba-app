@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loop_page_view/loop_page_view.dart';
+import 'package:shiba_app/favorite_page.dart';
 import 'package:spring/spring.dart';
 
 void main() {
@@ -48,7 +49,7 @@ class _HomePageState extends State<HomePage> {
               const DrawerHeader(
                 decoration: BoxDecoration(color: Colors.brown),
                 child: Text(
-                  '画面遷移',
+                  'Shiba',
                   style: TextStyle(
                     fontSize: 24,
                     color: Colors.white,
@@ -56,9 +57,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.favorite),
                 title: const Text('お気に入り'),
                 onTap: () {
-                  //　TODO お気に入り画像一覧画面　遷移　処理追加
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => const FavoritePage())
+                  );
                 },
               ),
             ],
@@ -66,7 +70,7 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.black12,
         appBar: AppBar(
-          title: const Text("shiba"),
+          title: const Text("HOME"),
           backgroundColor: Colors.brown,
           centerTitle: true,
         ),
