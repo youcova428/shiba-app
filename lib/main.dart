@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   final int _itemCount = 1;
   final LoopPageController _controller = LoopPageController();
   bool _isIconShown = false;
+  List<String> favArray = [];
 
   @override
   void initState() {
@@ -60,9 +61,11 @@ class _HomePageState extends State<HomePage> {
                 leading: const Icon(Icons.favorite),
                 title: const Text('お気に入り'),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const FavoritePage())
-                  );
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              FavoritePage(favArray: favArray)));
                 },
               ),
             ],
@@ -88,6 +91,11 @@ class _HomePageState extends State<HomePage> {
                   // データ表示
                   return GestureDetector(
                       onDoubleTap: () {
+                        favArray.add(snapshot.data!.picId);
+                        print("お気に入りリスト");
+                        for (String picId in favArray) {
+                          print(picId);
+                        }
                         setState(() {
                           _isIconShown = !_isIconShown;
                         });
