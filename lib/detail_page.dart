@@ -12,6 +12,9 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  final LoopPageController _controller = LoopPageController();
+  bool pageFlag = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +25,7 @@ class _DetailPageState extends State<DetailPage> {
           centerTitle: true,
         ),
         body: LoopPageView.builder(
+          controller: _controller,
           itemCount: widget.favArray.length,
           itemBuilder: (_, index) {
             return Center(
@@ -30,12 +34,26 @@ class _DetailPageState extends State<DetailPage> {
                       "https://cdn.shibe.online/shibes/${widget.favArray[widget.index]}.jpg")),
             );
           },
-          onPageChanged: (value) {
-            // todo 一度だけ呼ばれるようにする
-            widget.index == widget.favArray.length - 1
-                ? widget.index = 0
-                : widget.index += 1;
-            setState(() {});
+          onPageChanged: (int page) {
+            if (pageFlag) {
+              pageFlag = false;
+              // fixme 左右スワイプ可能にさせる。
+              print("page: $page");
+              print("widget.index : ${widget.index}");
+              print("_controller.page : ${_controller.page}");
+              setState(() {
+                widget.index = page;
+              });
+              print("after setState page: $page");
+              print("after setState widget.index : ${widget.index}");
+            }
+            _controller
+                .nextPage(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInBack)
+                .whenComplete(() {
+              pageFlag = true;
+            });
           },
         ));
   }
