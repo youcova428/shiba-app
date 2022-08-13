@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -10,12 +11,14 @@ void main() {
   runApp(const MaterialApp(home: HomePage()));
 }
 
-Future<ShibaPic> fetchShibaPic() async {
+Future<List<String>> fetchShibaPic() async {
   final response = await http.get(Uri.parse(
-      'http://shibe.online/api/shibes?count=[1]&urls=[false]&httpsUrls=[true]'));
+      'http://shibe.online/api/shibes?count=100&urls=[false]&httpsUrls=[true]'));
   if (response.statusCode == 200) {
     print(response.body);
-    return ShibaPic.fromJson(jsonDecode(response.body));
+    List<dynamic> jsonArray = json.decode(response.body);
+    List<String> picIdList = jsonArray.map((e) => e.toString()).toList();
+    return picIdList;
   } else {
     throw Exception('柴犬画像取得できず');
   }
@@ -29,8 +32,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<ShibaPic> _futurePic;
-  final int _itemCount = 1;
+  late Future<List<String>> _futurePic;
   final LoopPageController _controller = LoopPageController();
   bool _isIconShown = false;
   List<String> favArray = [];
@@ -78,7 +80,7 @@ class _HomePageState extends State<HomePage> {
           centerTitle: true,
         ),
         body: Center(
-          child: FutureBuilder<ShibaPic>(
+          child: FutureBuilder<List<String>>(
               future: _futurePic,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
@@ -91,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                   // データ表示
                   return GestureDetector(
                       onDoubleTap: () {
-                        favArray.add(snapshot.data!.picId);
+                        favArray.add(snapshot.data![0]);
                         print("お気に入りリスト");
                         for (String picId in favArray) {
                           print(picId);
@@ -112,14 +114,17 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           LoopPageView.builder(
                             controller: _controller,
-                            itemCount: _itemCount,
+                            itemCount: snapshot.data!.length,
                             itemBuilder: (_, index) {
                               return Image(
                                   image: NetworkImage(
-                                      'https://cdn.shibe.online/shibes/${snapshot.data!.picId}.jpg'));
+                                      'https://cdn.shibe.online/shibes/${snapshot
+                                          .data![index]}.jpg'));
                             },
-                            onPageChanged: (value) {
-                              _futurePic = fetchShibaPic();
+                            onPageChanged: (page) {
+                              if (page == snapshot.data!.length - 1) {
+                                _futurePic = fetchShibaPic();
+                              }
                               setState(() {
                                 if (_isIconShown) _isIconShown = false;
                               });
@@ -166,11 +171,11 @@ class _HomePageState extends State<HomePage> {
 /// 柴犬の画像クラス
 ///
 class ShibaPic {
-  final String picId;
+  final List<String> picIds;
 
-  const ShibaPic({required this.picId});
+  const ShibaPic({required this.picIds});
 
-  factory ShibaPic.fromJson(List<dynamic> json) {
-    return ShibaPic(picId: json[0] as String);
-  }
+  // DesignPattern Factory
+  factory ShibaPic.fromJson(List<dynamic> json) =>
+      ShibaPic(picIds: json as List<String>);
 }
