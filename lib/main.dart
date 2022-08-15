@@ -46,133 +46,142 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              const DrawerHeader(
-                decoration: BoxDecoration(color: Colors.brown),
-                child: Text(
-                  'Shiba',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.white,
+    return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      home: Scaffold(
+          drawer: Drawer(
+            child: ListView(
+              children: <Widget>[
+                const DrawerHeader(
+                  decoration: BoxDecoration(color: Colors.brown),
+                  child: Text(
+                    'Shiba',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.home),
-                title: const Text('HOME'),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.favorite),
-                title: const Text('お気に入り'),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              FavoritePage(favArray: favArray)));
-                },
-              ),
-            ],
+                ListTile(
+                  leading: const Icon(Icons.home),
+                  title: const Text('HOME'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const HomePage()));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.favorite),
+                  title: const Text('お気に入り'),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                FavoritePage(favArray: favArray)));
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-        backgroundColor: Colors.black12,
-        appBar: AppBar(
-          title: const Text("HOME"),
-          backgroundColor: Colors.brown,
-          centerTitle: true,
-        ),
-        body: Center(
-          child: FutureBuilder<List<String>>(
-              future: _futurePic,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  }
-                  if (!snapshot.hasData) {
-                    return Text("データが見つかりません");
-                  }
-                  // データ表示
-                  return GestureDetector(
-                      onDoubleTap: () {
-                        favArray.add(snapshot.data![_currentPage]);
-                        print("お気に入りリスト");
-                        for (String picId in favArray) {
-                          print(picId);
-                        }
-                        setState(() {
-                          _isIconShown = !_isIconShown;
-                        });
-                        // 1秒後削除
-                        Future.delayed(const Duration(milliseconds: 1200), () {
+          // backgroundColor: Colors.black12,
+          appBar: AppBar(
+            title: const Text("HOME"),
+            backgroundColor: Colors.brown,
+            centerTitle: true,
+          ),
+          body: Center(
+            child: FutureBuilder<List<String>>(
+                future: _futurePic,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Text("Error: ${snapshot.error}");
+                    }
+                    if (!snapshot.hasData) {
+                      return Text("データが見つかりません");
+                    }
+                    // データ表示
+                    return GestureDetector(
+                        onDoubleTap: () {
+                          favArray.add(snapshot.data![_currentPage]);
+                          print("お気に入りリスト");
+                          for (String picId in favArray) {
+                            print(picId);
+                          }
                           setState(() {
-                            if (_isIconShown) {
-                              _isIconShown = false;
-                            }
+                            _isIconShown = !_isIconShown;
                           });
-                        });
-                      },
-                      child: Stack(
-                        children: [
-                          LoopPageView.builder(
-                            controller: _controller,
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (_, index) {
-                              return Image(
-                                  image: NetworkImage(
-                                      'https://cdn.shibe.online/shibes/${snapshot
-                                          .data![index]}.jpg'));
-                            },
-                            onPageChanged: (page) {
-                              if (page == snapshot.data!.length - 1) {
-                                _futurePic = fetchShibaPic();
+                          // 1秒後削除
+                          Future.delayed(const Duration(milliseconds: 1200), () {
+                            setState(() {
+                              if (_isIconShown) {
+                                _isIconShown = false;
                               }
-                              setState(() {
-                                if (_isIconShown) _isIconShown = false;
-                                _currentPage = page;
-                              });
-                            },
-                          ),
-                          Center(
-                            child: Spring.bubbleButton(
-                              bubbleStart: .5,
-                              bubbleEnd: 1.0,
-                              onTap: () {},
-                              delay: const Duration(milliseconds: 0),
-                              animDuration: const Duration(milliseconds: 1000),
-                              child: Visibility(
-                                visible: _isIconShown,
-                                child: const Icon(
-                                  Icons.favorite,
-                                  color: Colors.white,
-                                  size: 120,
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Colors.black,
-                                      blurRadius: 20,
-                                    )
-                                  ],
+                            });
+                          });
+                        },
+                        child: Stack(
+                          children: [
+                            LoopPageView.builder(
+                              controller: _controller,
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (_, index) {
+                                return Image(
+                                    image: NetworkImage(
+                                        'https://cdn.shibe.online/shibes/${snapshot
+                                            .data![index]}.jpg'));
+                              },
+                              onPageChanged: (page) {
+                                if (page == snapshot.data!.length - 1) {
+                                  _futurePic = fetchShibaPic();
+                                }
+                                setState(() {
+                                  if (_isIconShown) _isIconShown = false;
+                                  _currentPage = page;
+                                });
+                              },
+                            ),
+                            Center(
+                              child: Spring.bubbleButton(
+                                bubbleStart: .5,
+                                bubbleEnd: 1.0,
+                                onTap: () {},
+                                delay: const Duration(milliseconds: 0),
+                                animDuration: const Duration(milliseconds: 1000),
+                                child: Visibility(
+                                  visible: _isIconShown,
+                                  child: const Icon(
+                                    Icons.favorite,
+                                    color: Colors.white,
+                                    size: 120,
+                                    shadows: [
+                                      BoxShadow(
+                                        color: Colors.black,
+                                        blurRadius: 20,
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ));
-                } else {
-                  // 処理中の表示
-                  return const SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: CircularProgressIndicator());
-                }
-              }),
-        ));
+                          ],
+                        ));
+                  } else {
+                    // 処理中の表示
+                    return const SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: CircularProgressIndicator());
+                  }
+                }),
+          )),
+    );
   }
 }
 
