@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   final LoopPageController _controller = LoopPageController();
   bool _isIconShown = false;
   List<String> favArray = [];
+  int _currentPage = 0;
 
   @override
   void initState() {
@@ -93,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                   // データ表示
                   return GestureDetector(
                       onDoubleTap: () {
-                        favArray.add(snapshot.data![0]);
+                        favArray.add(snapshot.data![_currentPage]);
                         print("お気に入りリスト");
                         for (String picId in favArray) {
                           print(picId);
@@ -127,6 +128,7 @@ class _HomePageState extends State<HomePage> {
                               }
                               setState(() {
                                 if (_isIconShown) _isIconShown = false;
+                                _currentPage = page;
                               });
                             },
                           ),
