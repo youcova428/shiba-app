@@ -43,6 +43,10 @@ class _FavoritePageState extends State<FavoritePage> {
                             builder: (context) => DetailPage(
                                 favArray: widget.favArray, index: index)));
                   },
+                  onLongPress: () {
+                    widget.favArray.removeAt(index);
+                    setState(() {});
+                  },
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
