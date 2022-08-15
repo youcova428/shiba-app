@@ -61,6 +61,13 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.home),
+                title: const Text('HOME'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.favorite),
                 title: const Text('お気に入り'),
                 onTap: () {
