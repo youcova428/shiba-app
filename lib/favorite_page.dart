@@ -13,6 +13,7 @@ class _FavoritePageState extends State<FavoritePage> {
   static const double favIconSize = 30;
   static const double shadowValue = 15;
   bool deleteMode = false;
+  List<String> selectedList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,54 @@ class _FavoritePageState extends State<FavoritePage> {
             child: const Icon(Icons.arrow_back),
           ),
           title: const Text("お気に入り"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  if (!deleteMode) selectedList = [];
+                  if (deleteMode && selectedList.isNotEmpty) {
+                    showDialog<void>(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: const Text('削除'),
+                            content: const Text('選択した画像を削除しますか。'),
+                            actions: <Widget>[
+                              GestureDetector(
+                                child: const Text('いいえ'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              GestureDetector(
+                                child: const Text('はい'),
+                                onTap: () {
+                                  for (int i = 0;
+                                      i < selectedList.length;
+                                      i++) {
+                                    for (int j = 0;
+                                        j < widget.favArray.length;
+                                        j++) {
+                                      if (selectedList[i] ==
+                                          widget.favArray[j]) {
+                                        widget.favArray.removeAt(j);
+                                      }
+                                    }
+                                  }
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ],
+                          );
+                        });
+                  }
+                  setState(() {
+                    deleteMode = !deleteMode;
+                  });
+                },
+                icon: Icon(Icons.delete,
+                    color: deleteMode ? Colors.indigo : Colors.white))
+          ],
           backgroundColor: Colors.brown,
           centerTitle: true,
         ),
@@ -37,11 +86,19 @@ class _FavoritePageState extends State<FavoritePage> {
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DetailPage(
-                                favArray: widget.favArray, index: index)));
+                    if (deleteMode) {
+                      selectedList.add(widget.favArray[index]);
+                      print("削除するリスト");
+                      for (String id in selectedList) {
+                        print(id);
+                      }
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailPage(
+                                  favArray: widget.favArray, index: index)));
+                    }
                   },
                   onLongPress: () {
                     widget.favArray.removeAt(index);
