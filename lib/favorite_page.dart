@@ -13,7 +13,8 @@ class _FavoritePageState extends State<FavoritePage> {
   static const double favIconSize = 30;
   static const double shadowValue = 15;
   bool deleteMode = false;
-  List<String> selectedList = [];
+  List<SelectedPic> selectedList = [];
+  int selectIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class _FavoritePageState extends State<FavoritePage> {
                                     for (int j = 0;
                                         j < widget.favArray.length;
                                         j++) {
-                                      if (selectedList[i] ==
+                                      if (selectedList[i].picId ==
                                           widget.favArray[j]) {
                                         widget.favArray.removeAt(j);
                                       }
@@ -87,11 +88,18 @@ class _FavoritePageState extends State<FavoritePage> {
               return GestureDetector(
                   onTap: () {
                     if (deleteMode) {
-                      selectedList.add(widget.favArray[index]);
+                      selectedList.add(SelectedPic(
+                          picId: widget.favArray[index], isSelected: true));
                       print("削除するリスト");
-                      for (String id in selectedList) {
-                        print(id);
+                      for (int i = 0; i < selectedList.length; i++) {
+                        print(selectedList[i].picId);
+                        for (String id in widget.favArray) {
+                          if (selectedList[i].picId == id) {
+                            selectIndex = i;
+                          }
+                        }
                       }
+                      setState(() {});
                     } else {
                       Navigator.push(
                           context,
@@ -114,6 +122,27 @@ class _FavoritePageState extends State<FavoritePage> {
                                     "https://cdn.shibe.online/shibes/${widget.favArray[index]}.jpg"),
                                 fit: BoxFit.cover)),
                       ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Checkbox(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              activeColor: Colors.green,
+                              value: deleteMode && selectedList.isNotEmpty
+                                  ? selectedList[selectIndex].isSelected
+                                  : false,
+                              onChanged: (value) {
+                                setState(() {
+                                  if (selectedList.isNotEmpty) {
+                                    selectedList[selectIndex].isSelected =
+                                        value!;
+                                  }
+                                });
+                              }),
+                        ),
+                      ),
                       const Align(
                         alignment: Alignment.bottomLeft,
                         child: Icon(
@@ -134,4 +163,11 @@ class _FavoritePageState extends State<FavoritePage> {
       ),
     );
   }
+}
+
+class SelectedPic {
+  String picId;
+  bool isSelected = false;
+
+  SelectedPic({required this.picId, required this.isSelected});
 }
