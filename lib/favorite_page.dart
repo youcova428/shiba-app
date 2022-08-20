@@ -12,9 +12,23 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   static const double favIconSize = 30;
   static const double shadowValue = 15;
-  bool deleteMode = false;
-  List<SelectedPic> selectedList = [];
-  int selectIndex = 0;
+  bool _deleteMode = false;
+  List<FavPic> _favPicList = [];
+
+  @override
+  initState() {
+    super.initState();
+    List<FavPic> favoriteList = [];
+    widget.favArray.forEach((picId) {
+      favoriteList.add(FavPic(picId: picId, isSelected: false));
+    });
+
+    print('お気に入りリスト');
+    for (int i = 0; i < favoriteList.length; i++) {
+      print("$i番目 ${favoriteList[i].picId}");
+    }
+    _favPicList = favoriteList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +45,7 @@ class _FavoritePageState extends State<FavoritePage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  if (!deleteMode) selectedList = [];
-                  if (deleteMode && selectedList.isNotEmpty) {
+                  if (_deleteMode) {
                     showDialog<void>(
                         context: context,
                         builder: (_) {
@@ -49,16 +62,12 @@ class _FavoritePageState extends State<FavoritePage> {
                               GestureDetector(
                                 child: const Text('はい'),
                                 onTap: () {
-                                  for (int i = 0;
-                                      i < selectedList.length;
-                                      i++) {
-                                    for (int j = 0;
-                                        j < widget.favArray.length;
-                                        j++) {
-                                      if (selectedList[i].picId ==
-                                          widget.favArray[j]) {
-                                        widget.favArray.removeAt(j);
-                                      }
+                                  for (int i = 0; i < _favPicList.length; i++) {
+                                    print(
+                                        "index:$i picId:${_favPicList[i].picId} isSelected:${_favPicList[i].isSelected}");
+                                    if (_favPicList[i].isSelected) {
+                                      _favPicList.removeAt(i);
+                                      --i;
                                     }
                                   }
                                   setState(() {});
@@ -70,46 +79,43 @@ class _FavoritePageState extends State<FavoritePage> {
                         });
                   }
                   setState(() {
-                    deleteMode = !deleteMode;
+                    _deleteMode = !_deleteMode;
                   });
                 },
                 icon: Icon(Icons.delete,
-                    color: deleteMode ? Colors.indigo : Colors.white))
+                    color: _deleteMode ? Colors.indigo : Colors.white))
           ],
           backgroundColor: Colors.brown,
           centerTitle: true,
         ),
         body: GridView.builder(
-            itemCount: widget.favArray.length,
+            itemCount: _favPicList.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
             ),
             itemBuilder: (BuildContext context, int index) {
               return GestureDetector(
                   onTap: () {
-                    if (deleteMode) {
-                      selectedList.add(SelectedPic(
-                          picId: widget.favArray[index], isSelected: true));
-                      print("削除するリスト");
-                      for (int i = 0; i < selectedList.length; i++) {
-                        print(selectedList[i].picId);
-                        for (String id in widget.favArray) {
-                          if (selectedList[i].picId == id) {
-                            selectIndex = i;
-                          }
+                    print('タップされたindex:$index');
+                    if (_deleteMode) {
+                      setState(() {
+                        if (_favPicList[index].isSelected) {
+                          _favPicList[index].isSelected = false;
+                        } else {
+                          _favPicList[index].isSelected = true;
                         }
-                      }
-                      setState(() {});
+                      });
+                      print('isSelected:${_favPicList[index].isSelected}');
                     } else {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => DetailPage(
-                                  favArray: widget.favArray, index: index)));
+                                  favPicList: _favPicList, index: index)));
                     }
                   },
                   onLongPress: () {
-                    widget.favArray.removeAt(index);
+                    _favPicList.removeAt(index);
                     setState(() {});
                   },
                   child: Stack(
@@ -119,7 +125,7 @@ class _FavoritePageState extends State<FavoritePage> {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: NetworkImage(
-                                    "https://cdn.shibe.online/shibes/${widget.favArray[index]}.jpg"),
+                                    "https://cdn.shibe.online/shibes/${_favPicList[index].picId}.jpg"),
                                 fit: BoxFit.cover)),
                       ),
                       GestureDetector(
@@ -130,14 +136,13 @@ class _FavoritePageState extends State<FavoritePage> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               activeColor: Colors.green,
-                              value: deleteMode && selectedList.isNotEmpty
-                                  ? selectedList[selectIndex].isSelected
-                                  : false,
+                              value: _favPicList[index].isSelected,
                               onChanged: (value) {
                                 setState(() {
-                                  if (selectedList.isNotEmpty) {
-                                    selectedList[selectIndex].isSelected =
-                                        value!;
+                                  if (_deleteMode) {
+                                    _favPicList[index].isSelected
+                                        ? _favPicList[index].isSelected = false
+                                        : _favPicList[index].isSelected = true;
                                   }
                                 });
                               }),
@@ -165,9 +170,9 @@ class _FavoritePageState extends State<FavoritePage> {
   }
 }
 
-class SelectedPic {
+class FavPic {
   String picId;
-  bool isSelected = false;
+  bool isSelected;
 
-  SelectedPic({required this.picId, required this.isSelected});
+  FavPic({required this.picId, required this.isSelected});
 }

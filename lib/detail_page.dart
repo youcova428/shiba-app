@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:loop_page_view/loop_page_view.dart';
+import 'package:shiba_app/favorite_page.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage({Key? key, required this.favArray, required this.index})
+  DetailPage({Key? key, required this.favPicList, required this.index})
       : super(key: key);
-  List<String> favArray;
+  List<FavPic> favPicList;
   int index;
 
   @override
@@ -32,12 +33,12 @@ class _DetailPageState extends State<DetailPage> {
             ),
             body: LoopPageView.builder(
               controller: _controller,
-              itemCount: widget.favArray.length,
+              itemCount: widget.favPicList.length,
               itemBuilder: (_, index) {
                 return Center(
                   child: Image(
                       image: NetworkImage(
-                          "https://cdn.shibe.online/shibes/${widget.favArray[widget.index]}.jpg")),
+                          "https://cdn.shibe.online/shibes/${widget.favPicList[widget.index].picId}.jpg")),
                 );
               },
               onPageChanged: (int page) {
