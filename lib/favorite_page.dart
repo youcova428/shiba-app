@@ -45,7 +45,7 @@ class _FavoritePageState extends State<FavoritePage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  if (_deleteMode) {
+                  if (_deleteMode && isSelectedCheck(_favPicList)) {
                     showDialog<void>(
                         context: context,
                         builder: (_) {
@@ -79,7 +79,9 @@ class _FavoritePageState extends State<FavoritePage> {
                         });
                   }
                   setState(() {
-                    _deleteMode = !_deleteMode;
+                    if(!(_deleteMode && isSelectedCheck(_favPicList))) {
+                      _deleteMode = !_deleteMode;
+                    }
                   });
                 },
                 icon: Icon(Icons.delete_outline_sharp,
@@ -131,46 +133,58 @@ class _FavoritePageState extends State<FavoritePage> {
                       GestureDetector(
                         onTap: () {},
                         child: Align(
-                          alignment: Alignment.bottomRight,
+                          alignment: const Alignment(1.25, 1.25),
                           child: _deleteMode
-                              ? Checkbox(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  activeColor: Colors.blueAccent[700],
-                                  value: _favPicList[index].isSelected,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      if (_deleteMode) {
-                                        _favPicList[index].isSelected
-                                            ? _favPicList[index].isSelected =
-                                                false
-                                            : _favPicList[index].isSelected =
-                                                true;
-                                      }
-                                    });
-                                  })
+                              ? Transform.scale(
+                                  scale: 1.4,
+                                  child: Checkbox(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      activeColor: Colors.blueAccent[700],
+                                      value: _favPicList[index].isSelected,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (_deleteMode) {
+                                            _favPicList[index].isSelected
+                                                ? _favPicList[index]
+                                                    .isSelected = false
+                                                : _favPicList[index]
+                                                    .isSelected = true;
+                                          }
+                                        });
+                                      }))
                               : Container(),
                         ),
                       ),
-                      const Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Icon(
-                          Icons.favorite,
-                          color: Colors.white,
-                          size: favIconSize,
-                          shadows: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: shadowValue,
-                            )
-                          ],
-                        ),
-                      )
+                      _deleteMode
+                          ? const Icon(null)
+                          : const Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Icon(
+                                Icons.favorite,
+                                color: Colors.white,
+                                size: favIconSize,
+                                shadows: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: shadowValue,
+                                  )
+                                ],
+                              ))
                     ],
                   ));
             }),
       ),
     );
+  }
+
+  /// お気に入りリスト削除選択されているかどうかのチェックメソッド。
+  bool isSelectedCheck(List<FavPic> favList) {
+    for (FavPic favPic in favList) {
+      if (favPic.isSelected) return true;
+    }
+    return false;
   }
 }
 
