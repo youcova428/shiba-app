@@ -82,8 +82,8 @@ class _FavoritePageState extends State<FavoritePage> {
                     _deleteMode = !_deleteMode;
                   });
                 },
-                icon: Icon(Icons.delete,
-                    color: _deleteMode ? Colors.indigo : Colors.white))
+                icon: Icon(Icons.delete_outline_sharp,
+                    color: _deleteMode ? Colors.blueAccent[700] : Colors.white))
           ],
           backgroundColor: Colors.brown,
           centerTitle: true,
@@ -132,20 +132,24 @@ class _FavoritePageState extends State<FavoritePage> {
                         onTap: () {},
                         child: Align(
                           alignment: Alignment.bottomRight,
-                          child: Checkbox(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              activeColor: Colors.green,
-                              value: _favPicList[index].isSelected,
-                              onChanged: (value) {
-                                setState(() {
-                                  if (_deleteMode) {
-                                    _favPicList[index].isSelected
-                                        ? _favPicList[index].isSelected = false
-                                        : _favPicList[index].isSelected = true;
-                                  }
-                                });
-                              }),
+                          child: _deleteMode
+                              ? Checkbox(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  activeColor: Colors.blueAccent[700],
+                                  value: _favPicList[index].isSelected,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (_deleteMode) {
+                                        _favPicList[index].isSelected
+                                            ? _favPicList[index].isSelected =
+                                                false
+                                            : _favPicList[index].isSelected =
+                                                true;
+                                      }
+                                    });
+                                  })
+                              : Container(),
                         ),
                       ),
                       const Align(
