@@ -71,8 +71,7 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const HomePage()));
+                            builder: (context) => const HomePage()));
                   },
                 ),
                 ListTile(
@@ -80,10 +79,13 @@ class _HomePageState extends State<HomePage> {
                   title: const Text('お気に入り'),
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                FavoritePage(favArray: favArray)));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    FavoritePage(favArray: favArray)))
+                        .then((value) {
+                      favArray = value;
+                    });
                   },
                 ),
               ],
@@ -118,7 +120,8 @@ class _HomePageState extends State<HomePage> {
                             _isIconShown = !_isIconShown;
                           });
                           // 1秒後削除
-                          Future.delayed(const Duration(milliseconds: 1200), () {
+                          Future.delayed(const Duration(milliseconds: 1200),
+                              () {
                             setState(() {
                               if (_isIconShown) {
                                 _isIconShown = false;
@@ -134,8 +137,7 @@ class _HomePageState extends State<HomePage> {
                               itemBuilder: (_, index) {
                                 return Image(
                                     image: NetworkImage(
-                                        'https://cdn.shibe.online/shibes/${snapshot
-                                            .data![index]}.jpg'));
+                                        'https://cdn.shibe.online/shibes/${snapshot.data![index]}.jpg'));
                               },
                               onPageChanged: (page) {
                                 if (page == snapshot.data!.length - 1) {
@@ -153,7 +155,8 @@ class _HomePageState extends State<HomePage> {
                                 bubbleEnd: 1.0,
                                 onTap: () {},
                                 delay: const Duration(milliseconds: 0),
-                                animDuration: const Duration(milliseconds: 1000),
+                                animDuration:
+                                    const Duration(milliseconds: 1000),
                                 child: Visibility(
                                   visible: _isIconShown,
                                   child: const Icon(

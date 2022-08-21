@@ -41,26 +41,14 @@ class _DetailPageState extends State<DetailPage> {
                           "https://cdn.shibe.online/shibes/${widget.favPicList[widget.index].picId}.jpg")),
                 );
               },
-              onPageChanged: (int page) {
-                if (pageFlag) {
-                  pageFlag = false;
-                  // fixme 左右スワイプ可能にさせる。
-                  print("page: $page");
-                  print("widget.index : ${widget.index}");
-                  print("_controller.page : ${_controller.page}");
-                  setState(() {
-                    widget.index = page;
-                  });
-                  print("after setState page: $page");
-                  print("after setState widget.index : ${widget.index}");
-                }
-                _controller
-                    .nextPage(
-                        duration: const Duration(milliseconds: 250),
-                        curve: Curves.easeInBack)
-                    .whenComplete(() {
-                  pageFlag = true;
-                });
+              // fixme リストを一周させると一瞬止まったように表示される。
+              onPageChanged: (page) {
+                  print('page $page');
+                  ++widget.index;
+                  if (widget.index > widget.favPicList.length -1){
+                    widget.index = 0;
+                  }
+                  setState(() {});
               },
             )));
   }

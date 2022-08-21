@@ -38,7 +38,7 @@ class _FavoritePageState extends State<FavoritePage> {
       home: Scaffold(
         appBar: AppBar(
           leading: GestureDetector(
-            onTap: () => Navigator.pop(context),
+            onTap: () => Navigator.pop(context, widget.favArray),
             child: const Icon(Icons.arrow_back),
           ),
           title: const Text("お気に入り"),
@@ -70,6 +70,11 @@ class _FavoritePageState extends State<FavoritePage> {
                                       --i;
                                     }
                                   }
+                                  // List<FavPic> -> List<String> 変換
+                                  List<String> currentFavList = [];
+                                  _favPicList.forEach((favPic) =>
+                                      currentFavList.add(favPic.picId));
+                                  widget.favArray = currentFavList;
                                   setState(() {});
                                   Navigator.pop(context);
                                 },
@@ -179,7 +184,7 @@ class _FavoritePageState extends State<FavoritePage> {
     );
   }
 
-  /// お気に入りリスト削除選択されているかどうかのチェックメソッド。
+  /// お気に入りリスト削除選択されているかどうか確認するチェックメソッド。
   bool isSelectedCheck(List<FavPic> favList) {
     for (FavPic favPic in favList) {
       if (favPic.isSelected) return true;
