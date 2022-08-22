@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shiba_app/detail_page.dart';
 
 class FavoritePage extends StatefulWidget {
@@ -14,6 +15,8 @@ class _FavoritePageState extends State<FavoritePage> {
   static const double shadowValue = 15;
   bool _deleteMode = false;
   List<FavPic> _favPicList = [];
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  static const String favArrayKey = 'favArray';
 
   @override
   initState() {
@@ -70,11 +73,7 @@ class _FavoritePageState extends State<FavoritePage> {
                                       --i;
                                     }
                                   }
-                                  // List<FavPic> -> List<String> 変換
-                                  List<String> currentFavList = [];
-                                  _favPicList.forEach((favPic) =>
-                                      currentFavList.add(favPic.picId));
-                                  widget.favArray = currentFavList;
+                                  _setFavArray(convertList(_favPicList));
                                   setState(() {});
                                   Navigator.pop(context);
                                 },
@@ -123,6 +122,7 @@ class _FavoritePageState extends State<FavoritePage> {
                   },
                   onLongPress: () {
                     _favPicList.removeAt(index);
+                    _setFavArray(convertList(_favPicList));
                     setState(() {});
                   },
                   child: Stack(
@@ -190,6 +190,20 @@ class _FavoritePageState extends State<FavoritePage> {
       if (favPic.isSelected) return true;
     }
     return false;
+  }
+
+  /// List<FavPic> -> List<String> 変換　メソッド
+  List<String> convertList(List<FavPic> favPicList) {
+    List<String> favList = [];
+    favPicList.forEach((favPic) {
+      favList.add(favPic.picId);
+    });
+    return favList;
+  }
+
+  Future<void> _setFavArray(List<String> favList) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setStringList(favArrayKey, favList);
   }
 }
 

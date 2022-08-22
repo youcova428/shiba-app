@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:loop_page_view/loop_page_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shiba_app/favorite_page.dart';
 import 'package:spring/spring.dart';
 
@@ -37,11 +37,24 @@ class _HomePageState extends State<HomePage> {
   bool _isIconShown = false;
   List<String> favArray = [];
   int _currentPage = 0;
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  static const String favArrayKey = 'favArray';
+
+  Future<void> _getFavArray() async {
+    final SharedPreferences prefs = await _prefs;
+    favArray = prefs.getStringList(favArrayKey) ?? [];
+  }
+
+  Future<void> _setFavArray(List<String> favList) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setStringList(favArrayKey, favList);
+  }
 
   @override
   void initState() {
     super.initState();
     _futurePic = fetchShibaPic();
+    _getFavArray();
   }
 
   @override
@@ -84,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                                 builder: (context) =>
                                     FavoritePage(favArray: favArray)))
                         .then((value) {
-                      favArray = value;
+                      _getFavArray() as List<String>;
                     });
                   },
                 ),
@@ -116,6 +129,7 @@ class _HomePageState extends State<HomePage> {
                           for (String picId in favArray) {
                             print(picId);
                           }
+                          _setFavArray(favArray);
                           setState(() {
                             _isIconShown = !_isIconShown;
                           });
