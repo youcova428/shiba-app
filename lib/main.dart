@@ -157,6 +157,12 @@ class _HomePageState extends State<HomePage> {
                                 if (page == snapshot.data!.length - 1) {
                                   _futurePic = fetchShibaPic();
                                 }
+                                // preCacheImageの処理を記載する。
+                                precacheImage(
+                                    NetworkImage(
+                                        'https://cdn.shibe.online/shibes/${snapshot.data![page + 1]}.jpg'),
+                                    context);
+
                                 setState(() {
                                   if (_isIconShown) _isIconShown = false;
                                   _currentPage = page;
