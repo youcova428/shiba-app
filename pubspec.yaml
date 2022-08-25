@@ -38,6 +38,7 @@ dependencies:
   loop_page_view: ^1.2.0
   spring: ^2.0.2
   shared_preferences: ^2.0.15
+  cached_network_image: ^3.2.1
 
 dev_dependencies:
   flutter_test:

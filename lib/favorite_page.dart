@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shiba_app/detail_page.dart';
@@ -128,12 +129,16 @@ class _FavoritePageState extends State<FavoritePage> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    "https://cdn.shibe.online/shibes/${_favPicList[index].picId}.jpg"),
-                                fit: BoxFit.cover)),
+                      CachedNetworkImage(
+                        imageUrl:  "https://cdn.shibe.online/shibes/${_favPicList[index].picId}.jpg",
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: imageProvider,
+                                  fit:BoxFit.cover,
+                              )
+                          ),
+                        )
                       ),
                       GestureDetector(
                         onTap: () {},
