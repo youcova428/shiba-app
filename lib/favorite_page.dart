@@ -41,10 +41,7 @@ class _FavoritePageState extends State<FavoritePage> {
       darkTheme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () => Navigator.pop(context, widget.favArray),
-            child: const Icon(Icons.arrow_back),
-          ),
+          leading: BackButton(onPressed: () => Navigator.pop(context, widget.favArray)),
           title: const Text("お気に入り"),
           actions: [
             IconButton(

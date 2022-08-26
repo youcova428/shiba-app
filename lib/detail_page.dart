@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loop_page_view/loop_page_view.dart';
 import 'package:shiba_app/favorite_page.dart';
 
@@ -23,10 +24,7 @@ class _DetailPageState extends State<DetailPage> {
         darkTheme: ThemeData.dark(),
         home: Scaffold(
             appBar: AppBar(
-              leading: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: const Icon(Icons.arrow_back),
-              ),
+              leading: BackButton(onPressed: () =>  Navigator.pop(context)),
               title: const Text("画像詳細"),
               backgroundColor: Colors.brown,
               centerTitle: true,
