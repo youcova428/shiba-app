@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shiba_app/detail_page.dart';
 
@@ -57,7 +58,7 @@ class _FavoritePageState extends State<FavoritePage> {
                               GestureDetector(
                                 child: const Text('いいえ'),
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Get.back();
                                 },
                               ),
                               GestureDetector(
@@ -73,7 +74,7 @@ class _FavoritePageState extends State<FavoritePage> {
                                   }
                                   _setFavArray(convertList(_favPicList));
                                   setState(() {});
-                                  Navigator.pop(context);
+                                  Get.back();
                                 },
                               )
                             ],
@@ -111,11 +112,8 @@ class _FavoritePageState extends State<FavoritePage> {
                       });
                       print('isSelected:${_favPicList[index].isSelected}');
                     } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailPage(
-                                  favPicList: _favPicList, index: index)));
+                      Get.to(DetailPage(
+                          favPicList: _favPicList, index: index));
                     }
                   },
                   onLongPress: () {

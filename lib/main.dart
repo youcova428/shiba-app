@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:loop_page_view/loop_page_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,7 +9,7 @@ import 'package:shiba_app/favorite_page.dart';
 import 'package:spring/spring.dart';
 
 void main() {
-  runApp(const MaterialApp(home: HomePage()));
+  runApp(const GetMaterialApp(home: HomePage()));
 }
 
 Future<List<String>> fetchShibaPic() async {
@@ -80,23 +81,15 @@ class _HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.home),
                   title: const Text('HOME'),
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()));
+                    Get.offAll(const HomePage());
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.favorite),
                   title: const Text('お気に入り'),
                   onTap: () {
-                    Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    FavoritePage(favArray: favArray)))
-                        .then((value) {
+                    Get.to(FavoritePage(favArray: favArray))
+                        ?.then((value){
                       _getFavArray() as List<String>;
                     });
                   },
