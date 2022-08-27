@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:loop_page_view/loop_page_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:shiba_app/favorite_page.dart';
 
 class DetailPage extends StatefulWidget {
@@ -14,8 +13,20 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  final LoopPageController _controller = LoopPageController();
+  PageController?  _controller;
   bool pageFlag = true;
+
+  @override
+  void initState() {
+    super.initState();
+   _controller = PageController(initialPage: widget.index);
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,25 +40,21 @@ class _DetailPageState extends State<DetailPage> {
               backgroundColor: Colors.brown,
               centerTitle: true,
             ),
-            body: LoopPageView.builder(
-              controller: _controller,
+            body: PhotoViewGallery.builder(
               itemCount: widget.favPicList.length,
-              itemBuilder: (_, index) {
-                return Center(
-                  child: Image(
-                      image: NetworkImage(
-                          "https://cdn.shibe.online/shibes/${widget.favPicList[widget.index].picId}.jpg")),
-                );
+              pageController: _controller,
+              builder: (context, index) {
+                return PhotoViewGalleryPageOptions(
+                    imageProvider: NetworkImage(
+                        "https://cdn.shibe.online/shibes/${widget.favPicList[widget.index].picId}.jpg"));
               },
-              // fixme リストを一周させると一瞬止まったように表示される。
-              onPageChanged: (page) {
-                  print('page $page');
-                  ++widget.index;
-                  if (widget.index > widget.favPicList.length -1){
-                    widget.index = 0;
-                  }
-                  setState(() {});
-              },
+              onPageChanged: onPageChanged,
             )));
+  }
+
+  void onPageChanged(int index) {
+    setState(() {
+      widget.index = index;
+    });
   }
 }
