@@ -210,9 +210,14 @@ class ShibaPic {
 class Controller extends GetxController {
   var currentPage = 0.obs;
   var isIconShown = false.obs;
+  var deleteMode = false.obs;
 
   isIconsShown(bool isShown) {
     isIconShown.value = isShown;
     update();
+  }
+
+  isDeleteMode(bool argsBool) {
+    deleteMode.value = argsBool;
   }
 }
