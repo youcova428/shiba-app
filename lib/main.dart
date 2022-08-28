@@ -35,9 +35,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Future<List<String>> _futurePic;
   final LoopPageController _controller = LoopPageController();
-  bool _isIconShown = false;
   List<String> favArray = [];
-  int _currentPage = 0;
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   static const String favArrayKey = 'favArray';
 
@@ -60,6 +58,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final Controller c = Get.put(Controller());
     return MaterialApp(
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
@@ -88,8 +87,7 @@ class _HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.favorite),
                   title: const Text('お気に入り'),
                   onTap: () {
-                    Get.to(FavoritePage(favArray: favArray))
-                        ?.then((value){
+                    Get.to(FavoritePage(favArray: favArray))?.then((value) {
                       _getFavArray() as List<String>;
                     });
                   },
@@ -115,25 +113,21 @@ class _HomePageState extends State<HomePage> {
                       return Text("データが見つかりません");
                     }
                     // データ表示
-                    return GestureDetector(
+                    return Obx(() => GestureDetector(
                         onDoubleTap: () {
-                          favArray.add(snapshot.data![_currentPage]);
+                          favArray.add(snapshot.data![c.currentPage.value]);
                           print("お気に入りリスト");
                           for (String picId in favArray) {
                             print(picId);
                           }
                           _setFavArray(favArray);
-                          setState(() {
-                            _isIconShown = !_isIconShown;
-                          });
+                          print("ダブルタップ変数:${c.isIconShown.value}");
+                          c.isIconsShown(!c.isIconShown.value);
+                          print("ダブルタップ変数:${c.isIconShown.value}");
                           // 1秒後削除
                           Future.delayed(const Duration(milliseconds: 1200),
                               () {
-                            setState(() {
-                              if (_isIconShown) {
-                                _isIconShown = false;
-                              }
-                            });
+                            if (c.isIconShown.value) c.isIconShown(false);
                           });
                         },
                         child: Stack(
@@ -156,10 +150,8 @@ class _HomePageState extends State<HomePage> {
                                         'https://cdn.shibe.online/shibes/${snapshot.data![page + 1]}.jpg'),
                                     context);
 
-                                setState(() {
-                                  if (_isIconShown) _isIconShown = false;
-                                  _currentPage = page;
-                                });
+                                if (c.isIconShown.value) c.isIconShown.value = false;
+                                c.currentPage.value = page;
                               },
                             ),
                             Center(
@@ -171,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                                 animDuration:
                                     const Duration(milliseconds: 1000),
                                 child: Visibility(
-                                  visible: _isIconShown,
+                                  visible: c.isIconShown.value,
                                   child: const Icon(
                                     Icons.favorite,
                                     color: Colors.white,
@@ -187,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           ],
-                        ));
+                        )));
                   } else {
                     // 処理中の表示
                     return const SizedBox(
@@ -212,4 +204,15 @@ class ShibaPic {
   // DesignPattern Factory
   factory ShibaPic.fromJson(List<dynamic> json) =>
       ShibaPic(picIds: json as List<String>);
+}
+
+/// Controller クラス
+class Controller extends GetxController {
+  var currentPage = 0.obs;
+  var isIconShown = false.obs;
+
+  isIconsShown(bool isShown) {
+    isIconShown.value = isShown;
+    update();
+  }
 }
