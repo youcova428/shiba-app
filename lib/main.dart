@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.favorite),
                   title: const Text('お気に入り'),
                   onTap: () {
-                    Get.to(FavoritePage(favArray: favArray))?.then((value) {
+                    Get.to(FavoritePage(favArray: favArray))?.then((_) {
                       _getFavArray() as List<String>;
                     });
                   },
@@ -121,9 +121,7 @@ class _HomePageState extends State<HomePage> {
                             print(picId);
                           }
                           _setFavArray(favArray);
-                          print("ダブルタップ変数:${c.isIconShown.value}");
                           c.isIconsShown(!c.isIconShown.value);
-                          print("ダブルタップ変数:${c.isIconShown.value}");
                           // 1秒後削除
                           Future.delayed(const Duration(milliseconds: 1200),
                               () {

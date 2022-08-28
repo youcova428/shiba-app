@@ -45,7 +45,7 @@ class _FavoritePageState extends State<FavoritePage> {
           return Scaffold(
             appBar: AppBar(
               leading: BackButton(
-                  onPressed: () => Navigator.pop(context, widget.favArray)),
+                  onPressed: () => Get.back()),
               title: const Text("お気に入り"),
               actions: [
                 IconButton(
