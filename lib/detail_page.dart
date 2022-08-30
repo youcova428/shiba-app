@@ -14,13 +14,13 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  PageController?  _controller;
+  PageController? _controller;
   bool pageFlag = true;
 
   @override
   void initState() {
     super.initState();
-   _controller = PageController(initialPage: widget.index);
+    _controller = PageController(initialPage: widget.index);
   }
 
   @override
@@ -36,13 +36,17 @@ class _DetailPageState extends State<DetailPage> {
         darkTheme: ThemeData.dark(),
         home: Scaffold(
             appBar: AppBar(
-              leading: BackButton(onPressed: () =>  Get.back()),
+              leading: BackButton(onPressed: () => Get.back()),
               title: const Text("画像詳細"),
               backgroundColor: Colors.brown,
               centerTitle: true,
             ),
             body: PhotoViewGallery.builder(
-              // todo 背景テーマ対応させる
+              backgroundDecoration: BoxDecoration(
+                  color: MediaQuery.of(context).platformBrightness ==
+                          Brightness.dark
+                      ? const Color.fromRGBO(48, 48, 48, 1.0)
+                      : const Color.fromRGBO(250, 250, 250, 1.0)),
               itemCount: widget.favPicList.length,
               pageController: _controller,
               builder: (context, index) {
