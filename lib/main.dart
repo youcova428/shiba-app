@@ -148,7 +148,8 @@ class _HomePageState extends State<HomePage> {
                                         'https://cdn.shibe.online/shibes/${snapshot.data![page + 1]}.jpg'),
                                     context);
 
-                                if (c.isIconShown.value) c.isIconShown.value = false;
+                                if (c.isIconShown.value)
+                                  c.isIconShown.value = false;
                                 c.currentPage.value = page;
                               },
                             ),
@@ -209,6 +210,7 @@ class Controller extends GetxController {
   var currentPage = 0.obs;
   var isIconShown = false.obs;
   var deleteMode = false.obs;
+  var selectedItem = "0".obs;
 
   isIconsShown(bool isShown) {
     isIconShown.value = isShown;
